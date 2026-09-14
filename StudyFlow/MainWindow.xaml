@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window
+    x:Class="StudyFlow.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:StudyFlow"
+    xmlns:views="using:StudyFlow.Views.Pages"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Title="StudyFlow">
+
+    <Window.SystemBackdrop>
+        <DesktopAcrylicBackdrop />
+    </Window.SystemBackdrop>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <TitleBar
+                x:Name="AppTitleBar"
+                Title="Task Allocator"
+                Subtitle="Preview">
+            <TitleBar.IconSource>
+                <FontIconSource Glyph="&#xE7BE;" />
+            </TitleBar.IconSource>
+            <TitleBar.Content>
+                <AutoSuggestBox
+                    Width="360"
+                    VerticalAlignment="Center"
+                    PlaceholderText="Search.."
+                    QueryIcon="Find" />
+            </TitleBar.Content>
+            <TitleBar.RightHeader>
+                <PersonPicture
+                    Width="30"
+                    Height="30"/>
+            </TitleBar.RightHeader>
+        </TitleBar>
+        <NavigationView Grid.Row="1" IsBackButtonVisible="Visible"
+                        IsPaneToggleButtonVisible="True">
+            <NavigationView.MenuItems>
+                <NavigationViewItem Content="Home" Icon="Home"/>
+                <NavigationViewItem Content="Profile" Icon="Contact"/>
+            </NavigationView.MenuItems>
+            <Frame Grid.Row="1" x:Name="MainFrame"
+                   SourcePageType="views:MainPage"/>
+        </NavigationView>
+    </Grid>
+</Window>

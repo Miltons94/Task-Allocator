@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="StudyFlow.Views.Pages.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:StudyFlow.Views.Pages"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid Padding="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <CommandBar DefaultLabelPosition="Right" VerticalAlignment="Top" 
+                    VerticalContentAlignment="Center">
+            <AppBarButton Icon="Add" Label="Add New"/>
+            <AppBarButton Icon="Edit" Label="Edit"/>
+            <AppBarButton Icon="Delete" Label="Delete"/>
+            <CommandBar.Content>
+                <TextBlock Text="Tasks and Goals" FontSize="16" VerticalAlignment="Center"
+                           FontWeight="SemiBold"/>
+            </CommandBar.Content>
+        </CommandBar>
+        <Grid Grid.Row="1" Margin="4,10">
+            <!-- todo section for tasks and goals -->
+        </Grid>
+    </Grid>
+</Page>

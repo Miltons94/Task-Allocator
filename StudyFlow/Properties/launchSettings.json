@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "StudyFlow (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "StudyFlow (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
