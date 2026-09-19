@@ -5,27 +5,50 @@ using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
+using StudyFlow.Bus.Models;
+using StudyFlow.Models;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Text.Json;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Storage;
 
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
-
-namespace StudyFlow.Views.Pages
+namespace StudyFlow.Views.Pages;
+public sealed partial class MainPage : Page
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
-    public sealed partial class MainPage : Page
+    private AllTasks AllTasks { get; } = new AllTasks();
+    private ObservableCollection<TaskItem> Tasks { get; } = new();
+    public MainPage()
     {
-        public MainPage()
+        InitializeComponent();
+    }
+
+    private void AppBarButton_Click(object sender, RoutedEventArgs e)
+    {
+        Frame.Navigate(typeof(AddTaskPage));
+    }
+
+    protected override async void OnNavigatedTo(NavigationEventArgs e)
+    {
+        base.OnNavigatedTo(e);
+        try
         {
-            InitializeComponent();
+            var tasks = await AllTasks.GetTasksAsync();
+            Tasks.Clear();
+            foreach (var task in tasks)
+                Tasks.Add(task);
+            
+        }
+        catch (Exception ex)
+        {
+            // Handle exceptions (e.g., log the error, show a message to the user, etc.)
+            Debug.WriteLine($"Error loading tasks: {ex.Message}");
         }
     }
 }

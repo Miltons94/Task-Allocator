@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UserControl
+    x:Class="StudyFlow.Views.Components.CardItem"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:StudyFlow.Views.Components"
+    xmlns:models="using:StudyFlow.Models"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid Margin="10">
+        <Border Background="{ThemeResource SystemControlBackgroundAltHighBrush}" 
+                CornerRadius="{ThemeResource ControlCornerRadius}" 
+                BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" 
+                BorderThickness="1" 
+                Padding="10">
+            <StackPanel Orientation="Vertical">
+                <Grid ColumnDefinitions="*,Auto">
+                    <TextBlock Text="{x:Bind Task.Name}" FontSize="16" FontWeight="SemiBold" />
+                    <CheckBox IsChecked="{x:Bind Task.IsCompleted}" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                </Grid>
+                <Grid RowDefinitions="Auto,*">
+                    <TextBlock Text="Description" Style="{ThemeResource SubtitleTextBlockStyle}" />
+                    <TextBlock Text="{x:Bind Task.Description}" 
+                               Grid.Row="1" TextWrapping="Wrap" TextTrimming="None" />
+                </Grid>
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>

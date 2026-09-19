@@ -26,13 +26,6 @@
             <TitleBar.IconSource>
                 <FontIconSource Glyph="&#xE7BE;" />
             </TitleBar.IconSource>
-            <TitleBar.Content>
-                <AutoSuggestBox
-                    Width="360"
-                    VerticalAlignment="Center"
-                    PlaceholderText="Search.."
-                    QueryIcon="Find" />
-            </TitleBar.Content>
             <TitleBar.RightHeader>
                 <PersonPicture
                     Width="30"
@@ -40,6 +33,9 @@
             </TitleBar.RightHeader>
         </TitleBar>
         <NavigationView Grid.Row="1" IsBackButtonVisible="Visible"
+                        IsPaneOpen="False"
+                        BackRequested="NavigationView_BackRequested"
+                        IsBackEnabled="{x:Bind MainFrame.CanGoBack, Mode=OneWay}"
                         IsPaneToggleButtonVisible="True">
             <NavigationView.MenuItems>
                 <NavigationViewItem Content="Home" Icon="Home"/>
