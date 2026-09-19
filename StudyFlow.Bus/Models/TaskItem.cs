@@ -22,6 +22,7 @@ public class TaskItem
     public TaskItem() 
     {
     }
+
     public TaskItem(
         string name,
         string? description,
@@ -75,6 +76,8 @@ public class TaskItem
         var updatedJson = SerializeTasks(tasks);
         await File.WriteAllTextAsync(file, updatedJson);
     }
+
+
 
     /* 
      * method to serialize a list of tasks to JSON

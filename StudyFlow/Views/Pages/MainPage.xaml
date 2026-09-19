@@ -11,28 +11,26 @@
     mc:Ignorable="d">
 
     <Page.Resources>
-        <DataTemplate x:Key="TaskItemTemplate" x:DataType="models:TaskItem">
-            <Grid Margin="0,0,0,10">
-                <SwipeControl 
-                    DataContext="{x:Bind}"
-                    HorizontalAlignment="left"
-                    HorizontalContentAlignment="Left"
-                    VerticalAlignment="Center"
-                    VerticalContentAlignment="Center">
+        <DataTemplate x:Key="TaskItemTemplate"
+                      x:DataType="models:TaskItem">
+            <Grid Margin="0,0,0,20" Padding="0,10">
+                <SwipeControl DataContext="{x:Bind}"
+                              HorizontalAlignment="Left"
+                              HorizontalContentAlignment="Left"
+                              VerticalAlignment="Center"
+                              VerticalContentAlignment="Center">
                     <SwipeControl.LeftItems>
                         <SwipeItems Mode="Reveal">
-                            <SwipeItem
-                                Background="Transparent"
-                                Invoked="DeleteSwipeItem_Invoked"
-                                Text="Delete">
+                            <SwipeItem Background="Transparent"
+                                       Invoked="DeleteSwipeItem_Invoked"
+                                       Text="Delete">
                                 <SwipeItem.IconSource>
                                     <FontIconSource Glyph="&#xE74D;" />
                                 </SwipeItem.IconSource>
                             </SwipeItem>
-                            <SwipeItem
-                                Background="Transparent"
-                                Invoked="EditSwipeItem_Invoked"
-                                Text="Edit">
+                            <SwipeItem Background="Transparent"
+                                       Invoked="EditSwipeItem_Invoked"
+                                       Text="Edit">
                                 <SwipeItem.IconSource>
                                     <FontIconSource Glyph="&#xE70F;" />
                                 </SwipeItem.IconSource>
@@ -44,30 +42,33 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
-                        <Grid ColumnDefinitions="*,*"
-                              VerticalAlignment="Top">
-                            <TextBlock
-                                Text="{x:Bind Name}"
-                                Style="{ThemeResource BaseTextBlockStyle}"
-                                />
+                        <Grid ColumnDefinitions="Auto,*"
+                              VerticalAlignment="Top"
+                              ColumnSpacing="10">
+                            <ToggleButton
+                                    IsChecked="{x:Bind IsCompleted, Mode=TwoWay}"
+                                    Width="24"
+                                    Height="24"
+                                    Padding="0"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Center"
+                                    CornerRadius="20">
 
-                            <CheckBox
-                                IsChecked="{x:Bind IsCompleted, Mode=TwoWay}" 
-                                Content="Complete"
-                                VerticalAlignment="Center"
-                                Grid.Column="1"
-                                Margin="10,0,0,0"
-                                HorizontalAlignment="Right"
-                                CornerRadius="20"
-                                />
+                                <FontIcon Glyph="&#xE73E;" />
+
+                            </ToggleButton>
+
+                            <TextBlock Text="{x:Bind Name}"
+                                       VerticalAlignment="Center"
+                                       Grid.Column="1"
+                                       Style="{ThemeResource BaseTextBlockStyle}"
+                                       TextTrimming="WordEllipsis"/>
                         </Grid>
 
-                        <TextBlock 
-                                Text="{x:Bind Description}" 
-                                Style="{ThemeResource CaptionTextBlockStyle}"
-                                Grid.Row="1" TextWrapping="Wrap" 
-                                TextTrimming="None" 
-                                />  
+                        <TextBlock Text="{x:Bind Description}" 
+                                   Style="{ThemeResource CaptionTextBlockStyle}"
+                                   Grid.Row="1" TextWrapping="Wrap" 
+                                   TextTrimming="None" />  
                     </Grid>
                 </SwipeControl>
             </Grid>
@@ -82,30 +83,21 @@
         <CommandBar
             DefaultLabelPosition="Right" VerticalAlignment="Top" 
             VerticalContentAlignment="Center">
-            <AppBarButton 
-                Icon="Add" 
-                Label="Add New"
-                Click="AppBarButton_Click"
-                />
             
-            <AppBarButton
-                Icon="Edit" 
-                Label="Edit"
-                Click="EditButton_Click"
-                />
+            <AppBarButton Icon="Add" Label="Add New"
+                Click="AppBarButton_Click"/>
             
-            <AppBarButton
-                Icon="Delete" 
-                Label="Delete"
-                Click="DeleteButton_Click"
-                />
+            <AppBarButton Icon="Edit" Label="Edit"
+                Click="EditButton_Click"/>
+            
+            <AppBarButton Icon="Delete" Label="Delete"
+                Click="DeleteButton_Click"/>
             
             <CommandBar.Content>
-                <TextBlock
-                    Text="Tasks and Goals" FontSize="16"
+                <TextBlock Text="Tasks and Goals"
+                    FontSize="16"
                     VerticalAlignment="Center"
-                    FontWeight="SemiBold"
-                    />
+                    FontWeight="SemiBold"/>
                 
             </CommandBar.Content>
         </CommandBar>
@@ -120,13 +112,10 @@
                         PlaceholderText="Search.."
                         QueryIcon="Find" />
 
-                <ListView
-                        Grid.Row="1"
-                        Grid.Column="0"
-                        ItemsSource="{x:Bind Tasks}" 
-                        x:Name="TasksListView"
-                        ItemTemplate="{StaticResource TaskItemTemplate}"
-                        />
+                <ListView Grid.Row="1" Grid.Column="0"
+                          ItemsSource="{x:Bind Tasks}" 
+                          x:Name="TasksListView"
+                          ItemTemplate="{StaticResource TaskItemTemplate}"/>
             </Grid>
         </Grid>
     </Grid>
