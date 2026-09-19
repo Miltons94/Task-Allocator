@@ -10,6 +10,7 @@ public class TaskItem
         Environment.SpecialFolder.ApplicationData);
     private readonly string _appName = "StudyFlow";
     private readonly string _filePath = "tasks.json";
+
     public Guid ID { get; set; } = Guid.NewGuid();
     public string Name { get; set; } = string.Empty;
     public string? Description { get; set; }
@@ -49,11 +50,12 @@ public class TaskItem
 
         var json = await File.ReadAllTextAsync(file);
         List<TaskItem> tasks = !string.IsNullOrEmpty(json)
-            ? JsonSerializer.Deserialize<List<TaskItem>>(json)
+            ? DeserializeTasks(json)
             ?? []
             :  [];
+
         tasks.Add(this);
-        var updatedJson = JsonSerializer.Serialize(tasks);
+        var updatedJson = SerializeTasks(tasks);
         await File.WriteAllTextAsync(file, updatedJson);
     }
 
@@ -65,14 +67,30 @@ public class TaskItem
 
         var json = await File.ReadAllTextAsync(file);
         List<TaskItem> tasks = !string.IsNullOrEmpty(json)
-            ? JsonSerializer.Deserialize<List<TaskItem>>(json)
+            ? DeserializeTasks(json)
             ?? []
             :  [];
-        int res = tasks.RemoveAll(t => t.ID == this.ID);
-        Debug.WriteLine($"Deleted {res} tasks.");
-        var updatedJson = JsonSerializer.Serialize(tasks);
+
+        tasks.RemoveAll(t => t.ID == this.ID);
+        var updatedJson = SerializeTasks(tasks);
         await File.WriteAllTextAsync(file, updatedJson);
     }
+
+    /* 
+     * method to serialize a list of tasks to JSON
+     */
+    private static string SerializeTasks(List<TaskItem> tasks)
+        => JsonSerializer.Serialize(tasks);
+
+    /* 
+     * method to deserialize JSON to a list of tasks
+     */
+    private static List<TaskItem> DeserializeTasks(string json)
+        => JsonSerializer.Deserialize<List<TaskItem>>(json) ?? [];
+
+    /* 
+     * method to get the storage file path
+     */
     private string GetStorageFile(string filePath)
     {
         var appFolder = Path.Combine(_storageFolder, _appName);
@@ -90,6 +108,7 @@ public class TaskItem
 
     public override string ToString()
     {
-        return $"TaskItem: {Name}, Description: {Description}, Category: {Category}, Priority: {Priority}, StartDate: {StartDate}, DueDate: {DueDate}, IsCompleted: {IsCompleted}";
+        return JsonSerializer.Serialize(
+            this, new JsonSerializerOptions { WriteIndented = true });   
     }
 }
