@@ -34,6 +34,24 @@ public sealed partial class MainPage : Page
         Frame.Navigate(typeof(AddTaskPage));
     }
 
+    private void DeleteButton_Click(object sender, RoutedEventArgs e)
+    {
+        var task = (TaskItem?)(sender as Button)?.DataContext;
+        if (task != null)
+        {
+            Tasks.Remove(task);
+            task.Delete();
+        }
+    }
+
+    private void EditButton_Click(object sender, RoutedEventArgs e)
+    {
+        var task = (TaskItem?)(sender as Button)?.DataContext;
+        if (task != null)
+        {
+            Frame.Navigate(typeof(AddTaskPage), task);
+        }
+    }
     protected override async void OnNavigatedTo(NavigationEventArgs e)
     {
         base.OnNavigatedTo(e);
@@ -49,6 +67,23 @@ public sealed partial class MainPage : Page
         {
             // Handle exceptions (e.g., log the error, show a message to the user, etc.)
             Debug.WriteLine($"Error loading tasks: {ex.Message}");
+        }
+    }
+
+    private void DeleteSwipeItem_Invoked(SwipeItem sender, SwipeItemInvokedEventArgs args)
+    {
+        if(args.SwipeControl.DataContext is TaskItem task)
+        {
+            Tasks.Remove(task);
+            task.Delete();
+        }
+    }
+
+    private void EditSwipeItem_Invoked(SwipeItem sender, SwipeItemInvokedEventArgs args)
+    {               
+        if(args.SwipeControl.DataContext is TaskItem task)
+        {
+            Frame.Navigate(typeof(AddTaskPage), task);
         }
     }
 }

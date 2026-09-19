@@ -8,8 +8,9 @@ public class TaskItem
 {
     private readonly string _storageFolder = Environment.GetFolderPath(
         Environment.SpecialFolder.ApplicationData);
+    private readonly string _appName = "StudyFlow";
     private readonly string _filePath = "tasks.json";
-    public Guid ID { get; } = Guid.NewGuid();
+    public Guid ID { get; set; } = Guid.NewGuid();
     public string Name { get; set; } = string.Empty;
     public string? Description { get; set; }
     public Category Category { get; set; } = Category.Personal;
@@ -48,11 +49,10 @@ public class TaskItem
 
         var json = await File.ReadAllTextAsync(file);
         List<TaskItem> tasks = !string.IsNullOrEmpty(json)
-            ? System.Text.Json.JsonSerializer.Deserialize<List<TaskItem>>(json)
+            ? JsonSerializer.Deserialize<List<TaskItem>>(json)
             ?? []
             :  [];
         tasks.Add(this);
-        Debug.WriteLine(tasks.Count);
         var updatedJson = JsonSerializer.Serialize(tasks);
         await File.WriteAllTextAsync(file, updatedJson);
     }
@@ -65,16 +65,17 @@ public class TaskItem
 
         var json = await File.ReadAllTextAsync(file);
         List<TaskItem> tasks = !string.IsNullOrEmpty(json)
-            ? System.Text.Json.JsonSerializer.Deserialize<List<TaskItem>>(json)
+            ? JsonSerializer.Deserialize<List<TaskItem>>(json)
             ?? []
             :  [];
-        tasks.RemoveAll(t => t.ID == this.ID);
+        int res = tasks.RemoveAll(t => t.ID == this.ID);
+        Debug.WriteLine($"Deleted {res} tasks.");
         var updatedJson = JsonSerializer.Serialize(tasks);
         await File.WriteAllTextAsync(file, updatedJson);
     }
     private string GetStorageFile(string filePath)
     {
-        var appFolder = Path.Combine(_storageFolder, "StudyFlow");
+        var appFolder = Path.Combine(_storageFolder, _appName);
         if (!Directory.Exists(appFolder))
         {
             Directory.CreateDirectory(appFolder);

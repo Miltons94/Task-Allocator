@@ -13,35 +13,63 @@
     <Page.Resources>
         <DataTemplate x:Key="TaskItemTemplate" x:DataType="models:TaskItem">
             <Grid Margin="0,0,0,10">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-                <Grid ColumnDefinitions="*,*"
-                      VerticalAlignment="Top">
-                    <TextBlock
-                        Text="{x:Bind Name}"
-                        Style="{ThemeResource BaseTextBlockStyle}"
-                        />
-                    
-                    <CheckBox
-                        IsChecked="{x:Bind IsCompleted, Mode=TwoWay}" 
-                        Content="Complete"
-                        VerticalAlignment="Center"
-                        Grid.Column="1"
-                        Margin="10,0,0,0"
-                        HorizontalAlignment="Right"
-                        CornerRadius="20"
-                        />
-                    
-                </Grid>
-                <TextBlock 
-                    Text="{x:Bind Description}" 
-                    Style="{ThemeResource CaptionTextBlockStyle}"
-                    Grid.Row="1" TextWrapping="Wrap" 
-                    TextTrimming="None" 
-                    />
-                
+                <SwipeControl 
+                    DataContext="{x:Bind}"
+                    HorizontalAlignment="left"
+                    HorizontalContentAlignment="Left"
+                    VerticalAlignment="Center"
+                    VerticalContentAlignment="Center">
+                    <SwipeControl.LeftItems>
+                        <SwipeItems Mode="Reveal">
+                            <SwipeItem
+                                Background="Transparent"
+                                Invoked="DeleteSwipeItem_Invoked"
+                                Text="Delete">
+                                <SwipeItem.IconSource>
+                                    <FontIconSource Glyph="&#xE74D;" />
+                                </SwipeItem.IconSource>
+                            </SwipeItem>
+                            <SwipeItem
+                                Background="Transparent"
+                                Invoked="EditSwipeItem_Invoked"
+                                Text="Edit">
+                                <SwipeItem.IconSource>
+                                    <FontIconSource Glyph="&#xE70F;" />
+                                </SwipeItem.IconSource>
+                            </SwipeItem>
+                        </SwipeItems>
+                    </SwipeControl.LeftItems>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid ColumnDefinitions="*,*"
+                              VerticalAlignment="Top">
+                            <TextBlock
+                                Text="{x:Bind Name}"
+                                Style="{ThemeResource BaseTextBlockStyle}"
+                                />
+
+                            <CheckBox
+                                IsChecked="{x:Bind IsCompleted, Mode=TwoWay}" 
+                                Content="Complete"
+                                VerticalAlignment="Center"
+                                Grid.Column="1"
+                                Margin="10,0,0,0"
+                                HorizontalAlignment="Right"
+                                CornerRadius="20"
+                                />
+                        </Grid>
+
+                        <TextBlock 
+                                Text="{x:Bind Description}" 
+                                Style="{ThemeResource CaptionTextBlockStyle}"
+                                Grid.Row="1" TextWrapping="Wrap" 
+                                TextTrimming="None" 
+                                />  
+                    </Grid>
+                </SwipeControl>
             </Grid>
         </DataTemplate>
     </Page.Resources>
@@ -63,11 +91,13 @@
             <AppBarButton
                 Icon="Edit" 
                 Label="Edit"
+                Click="EditButton_Click"
                 />
             
             <AppBarButton
                 Icon="Delete" 
                 Label="Delete"
+                Click="DeleteButton_Click"
                 />
             
             <CommandBar.Content>
@@ -84,22 +114,20 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <ScrollViewer 
-                Grid.Column="0"
-                VerticalScrollBarVisibility="Auto">
-                <Grid RowDefinitions="Auto,*" RowSpacing="8">
-                    <AutoSuggestBox
+            <Grid RowDefinitions="Auto,*" RowSpacing="8">
+                <AutoSuggestBox
+                        Grid.Column="0"
                         PlaceholderText="Search.."
                         QueryIcon="Find" />
 
-                    <ListView
+                <ListView
                         Grid.Row="1"
+                        Grid.Column="0"
                         ItemsSource="{x:Bind Tasks}" 
                         x:Name="TasksListView"
                         ItemTemplate="{StaticResource TaskItemTemplate}"
                         />
-                </Grid>
-            </ScrollViewer>
+            </Grid>
         </Grid>
     </Grid>
 </Page>

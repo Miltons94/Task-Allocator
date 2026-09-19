@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Windows.Storage;
+using Microsoft.UI.Xaml.Navigation;
 
 namespace StudyFlow.Views.Pages;
 public sealed partial class AddTaskPage : Page
@@ -33,5 +34,16 @@ public sealed partial class AddTaskPage : Page
         };
         Debug.WriteLine("DEBUG: " + newTask.ToString());
         newTask.Save();
+    }
+
+    protected override void OnNavigatedTo(NavigationEventArgs e)
+    {
+        base.OnNavigatedTo(e);
+        if (e.Parameter is TaskItem task)
+        {
+            Title = task.Name;
+            Description = task.Description ?? string.Empty;
+            IsCompleted = task.IsCompleted;
+        }
     }
 }
