@@ -20,16 +20,17 @@
             <ColumnDefinition Width="600" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
-        <TextBlock Text="Add Task" Grid.Column ="1" 
+        <TextBlock Text="{x:Bind _isEditing, Converter={StaticResource BoolToPageTitle}}" 
+                   Grid.Column ="1" 
                    Style="{ThemeResource SubtitleTextBlockStyle}" />
         <TextBox 
-                Text="{x:Bind Title, Mode=TwoWay}" 
+                Text="{x:Bind TaskItem.Name, Mode=TwoWay}" 
                 Grid.Row="1" Grid.Column="1"
                 PlaceholderText="Enter task title"
                 Header="Title"/>
 
-            <TextBox 
-                Text="{x:Bind Description, Mode=TwoWay}"
+        <TextBox 
+                Text="{x:Bind TaskItem.Description, Mode=TwoWay}"
                 Grid.Row="2" 
                 Grid.Column="1"
                 PlaceholderText="Enter task description" 
@@ -37,14 +38,13 @@
                 TextWrapping="Wrap"
                 ScrollViewer.VerticalScrollBarVisibility="Auto"
                 AcceptsReturn="True"/>
-        
-        
+
         <StackPanel Orientation="Horizontal" Grid.Row="3" 
                     Grid.Column="1" 
                     Spacing="8"
                     HorizontalAlignment="Right">
             <Button Content="Cancel"/>
-            <Button Content="Save" 
+            <Button Content="{x:Bind _isEditing, Converter={StaticResource BoolToButtonText}}" 
                     Click="AddTaskButton_Click"
                     Style="{StaticResource AccentButtonStyle}"/>
         </StackPanel>   

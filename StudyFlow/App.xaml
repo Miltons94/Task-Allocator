@@ -3,6 +3,7 @@
     x:Class="StudyFlow.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="using:StudyFlow.Converters"
     xmlns:local="using:StudyFlow">
     <Application.Resources>
         <ResourceDictionary>
@@ -11,6 +12,8 @@
                 <!-- Other merged dictionaries here -->
             </ResourceDictionary.MergedDictionaries>
             <!-- Other app resources here -->
+            <converters:BoolToPageTitleConverter x:Key="BoolToPageTitle"/>
+            <converters:BoolToButtonTextConverter x:Key="BoolToButtonText"/>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

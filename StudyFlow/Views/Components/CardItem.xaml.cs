@@ -18,14 +18,14 @@ namespace StudyFlow.Views.Components
 {
     public sealed partial class CardItem : UserControl
     {
-        public TaskItem Task
+        public Models.TaskItem Task
         {
-            get { return (TaskItem)GetValue(TaskProperty); }
+            get { return (Models.TaskItem)GetValue(TaskProperty); }
             set { SetValue(TaskProperty, value); }
         }
 
         public static readonly DependencyProperty TaskProperty =
-            DependencyProperty.Register(nameof(Task), typeof(TaskItem), typeof(CardItem), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(Task), typeof(Models.TaskItem), typeof(CardItem), new PropertyMetadata(null));
 
         public CardItem()
         {

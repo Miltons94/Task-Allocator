@@ -11,67 +11,80 @@
     mc:Ignorable="d">
 
     <Page.Resources>
+        <StackLayout x:Key="TasksLayoutTemplate"
+                     Orientation="Vertical"
+                     Spacing="8"/>
         <DataTemplate x:Key="TaskItemTemplate"
                       x:DataType="models:TaskItem">
-            <Grid Margin="0,0,0,20" Padding="0,10">
-                <SwipeControl DataContext="{x:Bind}"
-                              HorizontalAlignment="Left"
-                              HorizontalContentAlignment="Left"
-                              VerticalAlignment="Center"
-                              VerticalContentAlignment="Center">
-                    <SwipeControl.LeftItems>
-                        <SwipeItems Mode="Reveal">
-                            <SwipeItem Background="Transparent"
-                                       Invoked="DeleteSwipeItem_Invoked"
-                                       Text="Delete">
-                                <SwipeItem.IconSource>
-                                    <FontIconSource Glyph="&#xE74D;" />
-                                </SwipeItem.IconSource>
-                            </SwipeItem>
-                            <SwipeItem Background="Transparent"
-                                       Invoked="EditSwipeItem_Invoked"
-                                       Text="Edit">
-                                <SwipeItem.IconSource>
-                                    <FontIconSource Glyph="&#xE70F;" />
-                                </SwipeItem.IconSource>
-                            </SwipeItem>
-                        </SwipeItems>
-                    </SwipeControl.LeftItems>
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
-                        <Grid ColumnDefinitions="Auto,*"
-                              VerticalAlignment="Top"
-                              ColumnSpacing="10">
-                            <ToggleButton
-                                    IsChecked="{x:Bind IsCompleted, Mode=TwoWay}"
-                                    Width="24"
-                                    Height="24"
-                                    Padding="0"
-                                    HorizontalAlignment="Right"
+            <ItemContainer Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                           Padding="0" Margin="0" 
+                           CornerRadius="{ThemeResource OverlayCornerRadius}">
+                <Grid Padding="0" BorderThickness="1"
+                      BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                      CornerRadius="{ThemeResource OverlayCornerRadius}">
+                    <SwipeControl DataContext="{x:Bind}"
+                                  HorizontalAlignment="Left"
+                                  HorizontalContentAlignment="Left"
+                                  VerticalAlignment="Stretch"
+                                  VerticalContentAlignment="Center">
+                        <SwipeControl.LeftItems>
+                            <SwipeItems Mode="Reveal">
+                                <SwipeItem Invoked="DeleteSwipeItem_Invoked"
+                                           Text="Delete">
+                                    <SwipeItem.IconSource>
+                                        <FontIconSource Glyph="&#xE74D;" />
+                                    </SwipeItem.IconSource>
+                                </SwipeItem>
+                                <SwipeItem Invoked="EditSwipeItem_Invoked"
+                                           Text="Edit">
+                                    <SwipeItem.IconSource>
+                                        <FontIconSource Glyph="&#xE70F;" />
+                                    </SwipeItem.IconSource>
+                                </SwipeItem>
+                            </SwipeItems>
+                        </SwipeControl.LeftItems>
+                        <SwipeControl.RightItems>
+                            <SwipeItems Mode="Reveal">
+                                <SwipeItem Text="Mark as complete"
+                                           Invoked="MarkCompleted_Invoked">
+                                    <SwipeItem.IconSource>
+                                        <FontIconSource Glyph="&#xE8FB;"/>
+                                    </SwipeItem.IconSource>
+                                </SwipeItem>
+                            </SwipeItems>
+                        </SwipeControl.RightItems>
+                        <Grid RowSpacing="8" 
+                              Padding="10">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Grid ColumnDefinitions="Auto,*"
+                                  ColumnSpacing="10">
+                                <ToggleButton
+                                        IsChecked="{x:Bind IsCompleted, Mode=TwoWay}"
+                                        Width="20"
+                                        Height="20"
+                                        Padding="0"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Center"
+                                        CornerRadius="{ThemeResource OverlayCornerRadius}">
+                                    <FontIcon Glyph="&#xE73E;" FontSize="11"/>
+                                </ToggleButton>
+                                <TextBlock Text="{x:Bind Name}" Grid.Column="1"
                                     VerticalAlignment="Center"
-                                    CornerRadius="20">
-
-                                <FontIcon Glyph="&#xE73E;" />
-
-                            </ToggleButton>
-
-                            <TextBlock Text="{x:Bind Name}"
-                                       VerticalAlignment="Center"
-                                       Grid.Column="1"
-                                       Style="{ThemeResource BaseTextBlockStyle}"
-                                       TextTrimming="WordEllipsis"/>
+                                    Style="{ThemeResource BaseTextBlockStyle}"
+                                    TextTrimming="WordEllipsis"/>
+                            </Grid>
+                            <TextBlock Text="{x:Bind Description}" Grid.Column="1"
+                                Grid.Row="1"
+                                Style="{ThemeResource CaptionTextBlockStyle}"
+                                TextWrapping="Wrap" 
+                                TextTrimming="None" />
                         </Grid>
-
-                        <TextBlock Text="{x:Bind Description}" 
-                                   Style="{ThemeResource CaptionTextBlockStyle}"
-                                   Grid.Row="1" TextWrapping="Wrap" 
-                                   TextTrimming="None" />  
-                    </Grid>
-                </SwipeControl>
-            </Grid>
+                    </SwipeControl>
+                </Grid>
+            </ItemContainer>
         </DataTemplate>
     </Page.Resources>
     
@@ -112,10 +125,11 @@
                         PlaceholderText="Search.."
                         QueryIcon="Find" />
 
-                <ListView Grid.Row="1" Grid.Column="0"
-                          ItemsSource="{x:Bind Tasks}" 
-                          x:Name="TasksListView"
-                          ItemTemplate="{StaticResource TaskItemTemplate}"/>
+                <ItemsView Grid.Row="1" Grid.Column="0"
+                    ItemsSource="{x:Bind Tasks}" 
+                    x:Name="TasksListView"
+                    ItemTemplate="{StaticResource TaskItemTemplate}"
+                    Layout="{StaticResource TasksLayoutTemplate}"/>
             </Grid>
         </Grid>
     </Grid>

@@ -6,6 +6,7 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using StudyFlow.Bus.Models;
+using StudyFlow.Bus.Services;
 using StudyFlow.Models;
 using System;
 using System.Collections.Generic;
@@ -23,7 +24,8 @@ namespace StudyFlow.Views.Pages;
 public sealed partial class MainPage : Page
 {
     private AllTasks AllTasks { get; } = new AllTasks();
-    private ObservableCollection<TaskItem> Tasks { get; } = new();
+    private ObservableCollection<Models.TaskItem> Tasks { get; } = new();
+    private TaskStorageService _taskStorage { get; } = new();
     public MainPage()
     {
         InitializeComponent();
@@ -36,20 +38,29 @@ public sealed partial class MainPage : Page
 
     private void DeleteButton_Click(object sender, RoutedEventArgs e)
     {
-        var task = (TaskItem?)(sender as Button)?.DataContext;
+        var task = (Models.TaskItem?)(sender as Button)?.DataContext;
         if (task != null)
         {
             Tasks.Remove(task);
-            task.Delete();
+            _taskStorage.DeleteTask(task.ID);
         }
     }
 
     private void EditButton_Click(object sender, RoutedEventArgs e)
     {
-        var task = (TaskItem?)(sender as Button)?.DataContext;
+        var task = (Models.TaskItem?)(sender as Button)?.DataContext;
         if (task != null)
         {
             Frame.Navigate(typeof(AddTaskPage), task);
+        }
+    }
+
+    private void MarkCompleted_Invoked(SwipeItem sender, SwipeItemInvokedEventArgs args)
+    {
+        if(args.SwipeControl.DataContext is Models.TaskItem task)
+        {
+            task.IsCompleted = true;
+            _taskStorage.UpdateTask(task);
         }
     }
     protected override async void OnNavigatedTo(NavigationEventArgs e)
@@ -70,18 +81,18 @@ public sealed partial class MainPage : Page
         }
     }
 
-    private void DeleteSwipeItem_Invoked(SwipeItem sender, SwipeItemInvokedEventArgs args)
+    private void DeleteSwipeItem_Invoked(Microsoft.UI.Xaml.Controls.SwipeItem sender, SwipeItemInvokedEventArgs args)
     {
-        if(args.SwipeControl.DataContext is TaskItem task)
+        if(args.SwipeControl.DataContext is Models.TaskItem task)
         {
             Tasks.Remove(task);
-            task.Delete();
+            _taskStorage.DeleteTask(task.ID);
         }
     }
 
-    private void EditSwipeItem_Invoked(SwipeItem sender, SwipeItemInvokedEventArgs args)
+    private void EditSwipeItem_Invoked(Microsoft.UI.Xaml.Controls.SwipeItem sender, SwipeItemInvokedEventArgs args)
     {               
-        if(args.SwipeControl.DataContext is TaskItem task)
+        if(args.SwipeControl.DataContext is Models.TaskItem task)
         {
             Frame.Navigate(typeof(AddTaskPage), task);
         }
