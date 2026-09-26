@@ -43,7 +43,7 @@
                     Grid.Column="1" 
                     Spacing="8"
                     HorizontalAlignment="Right">
-            <Button Content="Cancel"/>
+            <Button Content="Cancel" Click="CancelBtn_Click"/>
             <Button Content="{x:Bind _isEditing, Converter={StaticResource BoolToButtonText}}" 
                     Click="AddTaskButton_Click"
                     Style="{StaticResource AccentButtonStyle}"/>

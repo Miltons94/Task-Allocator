@@ -23,7 +23,21 @@ public sealed partial class AddTaskPage : Page
     private async void AddTaskButton_Click(object sender, RoutedEventArgs e)
     {
         ArgumentNullException.ThrowIfNull(TaskItem, nameof(TaskItem));
-        _taskStorage.SaveTask(TaskItem);
+        if(!_isEditing)
+        { 
+            _taskStorage.SaveTask(TaskItem);
+        }
+        else
+        {
+            _taskStorage.UpdateTask(TaskItem);
+        }
+
+        TaskItem = new();
+    }
+
+    private void CancelBtn_Click(object sender, RoutedEventArgs e)
+    {
+        Frame.Navigate(typeof(MainPage));
     }
 
     protected override void OnNavigatedTo(NavigationEventArgs e)

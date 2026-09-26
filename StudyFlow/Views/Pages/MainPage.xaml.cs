@@ -8,37 +8,33 @@ using Microsoft.UI.Xaml.Navigation;
 using StudyFlow.Bus.Models;
 using StudyFlow.Bus.Services;
 using StudyFlow.Models;
+using StudyFlow.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Text.Json;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.Storage;
+using StudyFlow.Views.Dialogs;
 
 namespace StudyFlow.Views.Pages;
 public sealed partial class MainPage : Page
 {
+    private DialogService _dialogService { get; } = new();
     private AllTasks AllTasks { get; } = new AllTasks();
-    private ObservableCollection<Models.TaskItem> Tasks { get; } = new();
+    private ObservableCollection<TaskItem> Tasks { get; } = new();
     private TaskStorageService _taskStorage { get; } = new();
     public MainPage()
     {
         InitializeComponent();
     }
 
-    private void AppBarButton_Click(object sender, RoutedEventArgs e)
+    private async void AppBarButton_Click(object sender, RoutedEventArgs e)
     {
-        Frame.Navigate(typeof(AddTaskPage));
+        await _dialogService.ShowDialogAsync(new TaskDialog(), XamlRoot);
     }
 
     private void DeleteButton_Click(object sender, RoutedEventArgs e)
     {
-        var task = (Models.TaskItem?)(sender as Button)?.DataContext;
+        var task = (TaskItem?)(sender as Button)?.DataContext;
         if (task != null)
         {
             Tasks.Remove(task);
@@ -48,7 +44,7 @@ public sealed partial class MainPage : Page
 
     private void EditButton_Click(object sender, RoutedEventArgs e)
     {
-        var task = (Models.TaskItem?)(sender as Button)?.DataContext;
+        var task = (TaskItem?)(sender as Button)?.DataContext;
         if (task != null)
         {
             Frame.Navigate(typeof(AddTaskPage), task);
@@ -57,9 +53,9 @@ public sealed partial class MainPage : Page
 
     private void MarkCompleted_Invoked(SwipeItem sender, SwipeItemInvokedEventArgs args)
     {
-        if(args.SwipeControl.DataContext is Models.TaskItem task)
+        if(args.SwipeControl.DataContext is TaskItem task)
         {
-            task.IsCompleted = true;
+            task.IsCompleted = !task.IsCompleted;
             _taskStorage.UpdateTask(task);
         }
     }
@@ -68,11 +64,12 @@ public sealed partial class MainPage : Page
         base.OnNavigatedTo(e);
         try
         {
-            var tasks = await AllTasks.GetTasksAsync();
             Tasks.Clear();
+            var tasks = await AllTasks.GetTasksAsync();
             foreach (var task in tasks)
+            {
                 Tasks.Add(task);
-            
+            }  
         }
         catch (Exception ex)
         {
@@ -81,20 +78,30 @@ public sealed partial class MainPage : Page
         }
     }
 
-    private void DeleteSwipeItem_Invoked(Microsoft.UI.Xaml.Controls.SwipeItem sender, SwipeItemInvokedEventArgs args)
+    private void DeleteSwipeItem_Invoked(SwipeItem sender, SwipeItemInvokedEventArgs args)
     {
-        if(args.SwipeControl.DataContext is Models.TaskItem task)
+        if(args.SwipeControl.DataContext is TaskItem task)
         {
             Tasks.Remove(task);
             _taskStorage.DeleteTask(task.ID);
         }
     }
 
-    private void EditSwipeItem_Invoked(Microsoft.UI.Xaml.Controls.SwipeItem sender, SwipeItemInvokedEventArgs args)
+    private void EditSwipeItem_Invoked(SwipeItem sender, SwipeItemInvokedEventArgs args)
     {               
-        if(args.SwipeControl.DataContext is Models.TaskItem task)
+        if(args.SwipeControl.DataContext is TaskItem task)
         {
             Frame.Navigate(typeof(AddTaskPage), task);
+        }
+    }
+
+    private void ToggleButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is ToggleButton btn
+            && btn.DataContext is TaskItem task)
+        {
+            task.IsCompleted = !task.IsCompleted;
+            _taskStorage.UpdateTask(task);
         }
     }
 }

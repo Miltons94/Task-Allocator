@@ -29,14 +29,18 @@
                                   VerticalContentAlignment="Center">
                         <SwipeControl.LeftItems>
                             <SwipeItems Mode="Reveal">
-                                <SwipeItem Invoked="DeleteSwipeItem_Invoked"
-                                           Text="Delete">
+                                <SwipeItem 
+                                    Background="{StaticResource SolidBackgroundFillColorBaseAltBrush}"
+                                    Invoked="DeleteSwipeItem_Invoked"
+                                    Text="Delete">
                                     <SwipeItem.IconSource>
                                         <FontIconSource Glyph="&#xE74D;" />
                                     </SwipeItem.IconSource>
                                 </SwipeItem>
-                                <SwipeItem Invoked="EditSwipeItem_Invoked"
-                                           Text="Edit">
+                                <SwipeItem
+                                    Background="{StaticResource SolidBackgroundFillColorBaseAltBrush}"
+                                    Invoked="EditSwipeItem_Invoked"
+                                    Text="Edit">
                                     <SwipeItem.IconSource>
                                         <FontIconSource Glyph="&#xE70F;" />
                                     </SwipeItem.IconSource>
@@ -45,8 +49,10 @@
                         </SwipeControl.LeftItems>
                         <SwipeControl.RightItems>
                             <SwipeItems Mode="Reveal">
-                                <SwipeItem Text="Mark as complete"
-                                           Invoked="MarkCompleted_Invoked">
+                                <SwipeItem 
+                                    Background="{StaticResource SolidBackgroundFillColorBaseAltBrush}"
+                                    Text="Mark as complete"
+                                    Invoked="MarkCompleted_Invoked">
                                     <SwipeItem.IconSource>
                                         <FontIconSource Glyph="&#xE8FB;"/>
                                     </SwipeItem.IconSource>
@@ -62,13 +68,14 @@
                             <Grid ColumnDefinitions="Auto,*"
                                   ColumnSpacing="10">
                                 <ToggleButton
-                                        IsChecked="{x:Bind IsCompleted, Mode=TwoWay}"
-                                        Width="20"
-                                        Height="20"
-                                        Padding="0"
-                                        HorizontalAlignment="Right"
-                                        VerticalAlignment="Center"
-                                        CornerRadius="{ThemeResource OverlayCornerRadius}">
+                                    IsChecked="{x:Bind IsCompleted, Mode=TwoWay}"
+                                    Click="ToggleButton_Click"
+                                    Width="20"
+                                    Height="20"
+                                    Padding="0"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Center"
+                                    CornerRadius="{ThemeResource OverlayCornerRadius}">
                                     <FontIcon Glyph="&#xE73E;" FontSize="11"/>
                                 </ToggleButton>
                                 <TextBlock Text="{x:Bind Name}" Grid.Column="1"
@@ -97,7 +104,7 @@
             DefaultLabelPosition="Right" VerticalAlignment="Top" 
             VerticalContentAlignment="Center">
             
-            <AppBarButton Icon="Add" Label="Add New"
+            <AppBarButton Icon="Add" Label="Create"
                 Click="AppBarButton_Click"/>
             
             <AppBarButton Icon="Edit" Label="Edit"
@@ -105,13 +112,13 @@
             
             <AppBarButton Icon="Delete" Label="Delete"
                 Click="DeleteButton_Click"/>
-            
+
             <CommandBar.Content>
-                <TextBlock Text="Tasks and Goals"
+                <TextBlock Text="My Tasks"
                     FontSize="16"
                     VerticalAlignment="Center"
                     FontWeight="SemiBold"/>
-                
+
             </CommandBar.Content>
         </CommandBar>
         <Grid Grid.Row="1" Margin="4,10">
@@ -131,6 +138,6 @@
                     ItemTemplate="{StaticResource TaskItemTemplate}"
                     Layout="{StaticResource TasksLayoutTemplate}"/>
             </Grid>
-        </Grid>
+        </Grid> 
     </Grid>
 </Page>
