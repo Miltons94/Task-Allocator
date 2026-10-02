@@ -230,7 +230,6 @@ public sealed partial class MainPage : Page
         }
 
         task.Checklist.Add(new TaskChecklistItem { Title = title });
-        task.IsExpanded = true;
         await _taskStorage.UpdateTaskAsync(task);
         input.Text = string.Empty;
         RefreshTaskGroups();
@@ -520,15 +519,11 @@ public sealed partial class MainPage : Page
 
     private async Task LoadTasksAsync()
     {
-        var expansionStates = Tasks.ToDictionary(task => task.ID, task => task.IsExpanded);
         Tasks.Clear();
         var tasks = await AllTasks.GetTasksAsync();
         foreach (var task in tasks)
         {
             task.Checklist ??= new ObservableCollection<TaskChecklistItem>();
-            task.IsExpanded = expansionStates.TryGetValue(task.ID, out var isExpanded)
-                ? isExpanded
-                : task.Checklist.Count > 0;
             Tasks.Add(task);
         }
         RefreshTaskGroups();

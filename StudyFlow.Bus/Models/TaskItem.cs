@@ -14,7 +14,6 @@ public class TaskItem : INotifyPropertyChanged
     private string _name  = string.Empty;
     private string? _description = string.Empty;
     private bool _isCompleted = false;
-    private bool _isExpanded;
     private DateTimeOffset? _dueDate;
     public string Name
     {
@@ -66,19 +65,6 @@ public class TaskItem : INotifyPropertyChanged
     public Guid? LinkedEventId { get; set; }
     public string? LinkedEventTitle { get; set; }
     public ObservableCollection<TaskChecklistItem> Checklist { get; set; } = new();
-    [JsonIgnore]
-    public bool IsExpanded
-    {
-        get => _isExpanded;
-        set
-        {
-            if (_isExpanded != value)
-            {
-                _isExpanded = value;
-                OnPropertyChanged(nameof(IsExpanded));
-            }
-        }
-    }
     public DateTimeOffset StartDate { get; set; } = DateTimeOffset.Now;
     public DateTimeOffset? DueDate
     {
