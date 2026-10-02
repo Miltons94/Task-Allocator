@@ -33,5 +33,20 @@ namespace StudyFlow
                 MainFrame.GoBack();
             }
         }
+
+        private void AppNavigation_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
+        {
+            if (args.SelectedItem is NavigationViewItem { Tag: string destination })
+            {
+                if (MainFrame.Content is Views.Pages.MainPage currentPage)
+                {
+                    currentPage.NavigateToSection(destination);
+                }
+                else
+                {
+                    MainFrame.Navigate(typeof(Views.Pages.MainPage), destination);
+                }
+            }
+        }
     }
 }

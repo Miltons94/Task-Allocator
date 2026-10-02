@@ -10,15 +10,18 @@ public class TaskStorageService
     private static readonly SemaphoreSlim _fileLock = new(1, 1);
     private static readonly JsonSerializerOptions options = new() { WriteIndented = true };
 
-    public async void SaveTask(TaskItem task)
+    public async Task SaveTaskAsync(TaskItem task)
     {
         ArgumentNullException.ThrowIfNull(task, nameof(task));
+        if(string.IsNullOrEmpty(task.Name))
+        {
+            throw new InvalidOperationException("The task title cannot be empty!");
+        }
         var filePath = TaskStoragePath.GetStorageFilePath();
         if (string.IsNullOrEmpty(filePath))
             throw new InvalidOperationException("Storage file path is invalid.");
         try
         {
-            await _fileLock.WaitAsync();
             var json = await File.ReadAllTextAsync(filePath);
             List<TaskItem> tasks = await GetTasksAsync(json);
 
@@ -38,13 +41,9 @@ public class TaskStorageService
             Debug.WriteLine($"An error occured, {ex.Message}");
             throw;
         }
-        finally
-        {
-            _fileLock.Release();
-        }
     }
 
-    public async void UpdateTask(TaskItem task)
+    public async Task UpdateTaskAsync(TaskItem task)
     {
         ArgumentNullException.ThrowIfNull(task, nameof(task));
         var filePath = TaskStoragePath.GetStorageFilePath();
@@ -83,7 +82,7 @@ public class TaskStorageService
         }
     }
 
-    public async void DeleteTask(Guid id)
+    public async Task DeleteTaskAsync(Guid id)
     {
         ArgumentNullException.ThrowIfNull(id, nameof(id));
         var filePath = TaskStoragePath.GetStorageFilePath();
@@ -113,12 +112,15 @@ public class TaskStorageService
             Debug.WriteLine($"Failed to save task, {ex.Message}");
             throw;
         }
+        finally
+        {
+            _fileLock.Release();
+        }
     }
-    private static async Task<List<TaskItem>> GetTasksAsync(string json)
+    private async Task<List<TaskItem>> GetTasksAsync(string json)
     {
         try
         {
-            await _fileLock.WaitAsync();
             var tasks = !string.IsNullOrEmpty(json)
                 ? JsonSerializer.Deserialize<List<TaskItem>>(json)
                 ?? []
@@ -128,6 +130,25 @@ public class TaskStorageService
         catch(Exception ex)
         {
             Debug.WriteLine($"Failed to load tasks, ${ex.Message}");
+            throw;
+        }
+    }
+    public async Task ClearTasksAsync()
+    {
+        var file = TaskStoragePath.GetStorageFilePath();
+        if (string.IsNullOrEmpty(file))
+            throw new InvalidOperationException("Storage file path is invalid.");
+
+        try
+        {
+            await _fileLock.WaitAsync();
+            List<TaskItem> emptyList = [];
+            var updatedJson = JsonSerializer.Serialize(emptyList);
+            await File.WriteAllTextAsync(file, updatedJson);
+        }
+        catch(Exception ex)
+        {
+            Debug.WriteLine($"Failed to clear tasks, {ex.Message}");
             throw;
         }
         finally

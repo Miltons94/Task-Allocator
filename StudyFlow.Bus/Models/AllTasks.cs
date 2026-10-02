@@ -14,18 +14,20 @@ public class AllTasks
     }
     public async Task<ObservableCollection<TaskItem>> GetTasksAsync()
     {
+        Tasks.Clear();
         var file = TaskStoragePath.GetStorageFilePath();
         if(string.IsNullOrEmpty(file))                                                          
             throw new InvalidOperationException("Storage file path is invalid."); 
 
         var json = await File.ReadAllTextAsync(file);
         var tasks = !string.IsNullOrEmpty(json)
-            ? JsonSerializer.Deserialize<ObservableCollection<TaskItem>>(json)
+            ? JsonSerializer.Deserialize<List<TaskItem>>(json)
             ?? []
             :  [];
 
-        foreach (var task in tasks.OrderByDescending(t=>t.StartDate)
-                                  .ThenBy(t=>t.IsCompleted))
+        foreach (var task in tasks
+            .OrderByDescending(t=>t.StartDate)
+            .ThenBy(t=>t.IsCompleted))
         {
             Tasks.Add(task);
         }

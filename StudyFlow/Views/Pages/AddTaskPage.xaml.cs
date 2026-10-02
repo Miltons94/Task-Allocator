@@ -8,6 +8,8 @@ using System.Diagnostics;
 using Windows.Storage;
 using Microsoft.UI.Xaml.Navigation;
 using StudyFlow.Bus.Services;
+using StudyFlow.Bus.Models;
+using StudyFlow.Services;
 
 namespace StudyFlow.Views.Pages;
 public sealed partial class AddTaskPage : Page
@@ -25,11 +27,20 @@ public sealed partial class AddTaskPage : Page
         ArgumentNullException.ThrowIfNull(TaskItem, nameof(TaskItem));
         if(!_isEditing)
         { 
-            _taskStorage.SaveTask(TaskItem);
+            await _taskStorage.SaveTaskAsync(TaskItem);
         }
         else
         {
-            _taskStorage.UpdateTask(TaskItem);
+            await _taskStorage.UpdateTaskAsync(TaskItem);
+        }
+
+        try
+        {
+            TaskAlarmService.Reconcile(await new AllTasks().GetTasksAsync());
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Task reminders could not be scheduled: {ex}");
         }
 
         TaskItem = new();

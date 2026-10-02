@@ -1,8 +1,11 @@
 using System;
 using System.ComponentModel;
+using System.Globalization;
 using System.Runtime.CompilerServices;
+using System.Text.Json.Serialization;
 using StudyFlow.Bus.Enums;
 using StudyFlow.Enums;
+using System.Collections.ObjectModel;
 
 namespace StudyFlow.Models;
 public class TaskItem : INotifyPropertyChanged
@@ -11,6 +14,8 @@ public class TaskItem : INotifyPropertyChanged
     private string _name  = string.Empty;
     private string? _description = string.Empty;
     private bool _isCompleted = false;
+    private bool _isExpanded;
+    private DateTimeOffset? _dueDate;
     public string Name
     {
         get => _name;
@@ -53,8 +58,65 @@ public class TaskItem : INotifyPropertyChanged
     public Category Category { get; set; } = Category.Personal;
     public TaskState State { get; set; } = TaskState.Unset;
     public int Priority { get; set; }
-    public DateTimeOffset StartDate { get; set; } = DateTime.Now;
-    public DateTimeOffset? DueDate { get; set; }
+    public bool HasExplicitDueTime { get; set; }
+    public int EstimatedMinutes { get; set; } = 30;
+    public int FocusMinutes { get; set; }
+    public bool RemindersEnabled { get; set; } = true;
+    public int ReminderLeadMinutes { get; set; } = 30;
+    public Guid? LinkedEventId { get; set; }
+    public string? LinkedEventTitle { get; set; }
+    public ObservableCollection<TaskChecklistItem> Checklist { get; set; } = new();
+    [JsonIgnore]
+    public bool IsExpanded
+    {
+        get => _isExpanded;
+        set
+        {
+            if (_isExpanded != value)
+            {
+                _isExpanded = value;
+                OnPropertyChanged(nameof(IsExpanded));
+            }
+        }
+    }
+    public DateTimeOffset StartDate { get; set; } = DateTimeOffset.Now;
+    public DateTimeOffset? DueDate
+    {
+        get => _dueDate;
+        set
+        {
+            if (_dueDate != value)
+            {
+                _dueDate = value;
+                State = TaskState.Unsaved;
+                OnPropertyChanged(nameof(DueDate));
+                OnPropertyChanged(nameof(DueDateLabel));
+                OnPropertyChanged(nameof(IsDueSoon));
+            }
+        }
+    }
+    [JsonIgnore]
+    public string DueDateLabel
+    {
+        get
+        {
+            if (DueDate is not DateTimeOffset dueDate)
+            {
+                return string.Empty;
+            }
+
+            if (!HasExplicitDueTime)
+            {
+                dueDate = new DateTimeOffset(dueDate.Year, dueDate.Month, dueDate.Day, 9, 0, 0, dueDate.Offset);
+            }
+
+            return dueDate.ToString("ddd dd MMM, h:mm tt", CultureInfo.InvariantCulture);
+        }
+    }
+    [JsonIgnore]
+    public bool IsDueSoon => DueDate is DateTimeOffset dueDate
+        && dueDate.Date < DateTimeOffset.Now.Date.AddDays(3);
+
     public TaskItem() { }
     public TaskItem(
         string name,

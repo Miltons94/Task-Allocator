@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ContentDialog
+    x:Class="StudyFlow.Views.Dialogs.AcademicEventDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:StudyFlow.Views.Dialogs"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    PrimaryButtonText="Save event"
+    SecondaryButtonText="Cancel"
+    PrimaryButtonClick="SaveButton_Click"
+    DefaultButton="Primary"
+    mc:Ignorable="d"
+    MinWidth="420">
+    <ScrollViewer MaxHeight="600"
+                  VerticalScrollBarVisibility="Auto">
+        <StackPanel Spacing="12">
+            <TextBox x:Name="TitleBox"
+                     Header="Event name"
+                     PlaceholderText="e.g. Biology final"/>
+            <ComboBox x:Name="TypeBox"
+                      Header="Event type"
+                      SelectedIndex="0"
+                      HorizontalAlignment="Stretch">
+                <ComboBoxItem Content="Exam" Tag="Exam"/>
+                <ComboBoxItem Content="Holiday" Tag="Holiday"/>
+                <ComboBoxItem Content="Game" Tag="Game"/>
+                <ComboBoxItem Content="Assignment" Tag="Assignment"/>
+                <ComboBoxItem Content="Activity" Tag="Activity"/>
+                <ComboBoxItem Content="Other" Tag="Other"/>
+            </ComboBox>
+            <TextBox x:Name="DescriptionBox"
+                     Header="Details (optional)"
+                     AcceptsReturn="True"
+                     MinHeight="72"
+                     TextWrapping="Wrap"/>
+            <TextBox x:Name="LocationBox"
+                     Header="Location (optional)"
+                     PlaceholderText="Room, building, or venue"/>
+            <CalendarDatePicker x:Name="StartDatePicker"
+                                Header="Start date"
+                                PlaceholderText="Choose a date"/>
+            <CalendarDatePicker x:Name="EndDatePicker"
+                                Header="End date (optional)"
+                                PlaceholderText="Choose a date"/>
+            <TextBlock x:Name="ValidationMessage"
+                       Foreground="{ThemeResource SystemFillColorCriticalBrush}"
+                       TextWrapping="Wrap"
+                       Visibility="Collapsed"/>
+        </StackPanel>
+    </ScrollViewer>
+</ContentDialog>

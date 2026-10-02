@@ -32,14 +32,43 @@
                     Height="30"/>
             </TitleBar.RightHeader>
         </TitleBar>
-        <NavigationView Grid.Row="1" IsBackButtonVisible="Visible"
+        <NavigationView x:Name="AppNavigation" Grid.Row="1" IsBackButtonVisible="Visible"
                         IsPaneOpen="False"
+                        SelectionChanged="AppNavigation_SelectionChanged"
                         BackRequested="NavigationView_BackRequested"
                         IsBackEnabled="{x:Bind MainFrame.CanGoBack, Mode=OneWay}"
                         IsPaneToggleButtonVisible="True">
             <NavigationView.MenuItems>
-                <NavigationViewItem Content="Home" Icon="Home"/>
-                <NavigationViewItem Content="Profile" Icon="Contact"/>
+                <NavigationViewItem Content="Home" Tag="Home">
+                    <NavigationViewItem.Icon>
+                        <SymbolIcon Symbol="Home" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem Content="Focus" Tag="Focus">
+                    <NavigationViewItem.Icon>
+                        <SymbolIcon Symbol="Play" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem Content="Today" Tag="Today">
+                    <NavigationViewItem.Icon>
+                        <SymbolIcon Symbol="CalendarDay" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem Content="Overdue" Tag="Overdue">
+                    <NavigationViewItem.Icon>
+                        <SymbolIcon Symbol="Important" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem Content="My Tasks" Tag="Tasks">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE8FD;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem Content="Academic Calendar" Tag="Calendar">
+                    <NavigationViewItem.Icon>
+                        <SymbolIcon Symbol="Calendar" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
             </NavigationView.MenuItems>
             <Frame Grid.Row="1" x:Name="MainFrame"
                    SourcePageType="views:MainPage"/>
