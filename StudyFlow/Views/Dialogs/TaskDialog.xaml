@@ -26,18 +26,9 @@
 
             <TextBox x:Name="DescriptionBox"
                      Header="Description (optional)"
-                     PlaceholderText="Add notes or a short checklist"
+                     PlaceholderText="Add notes"
                      AcceptsReturn="True"
                      MinHeight="90"
-                     TextWrapping="Wrap"
-                     ScrollViewer.VerticalScrollBarVisibility="Auto"
-                     ScrollViewer.HorizontalScrollBarVisibility="Disabled" />
-
-            <TextBox x:Name="ChecklistBox"
-                     Header="Checklist (optional)"
-                     PlaceholderText="One step per line"
-                     AcceptsReturn="True"
-                     MinHeight="82"
                      TextWrapping="Wrap"
                      ScrollViewer.VerticalScrollBarVisibility="Auto"
                      ScrollViewer.HorizontalScrollBarVisibility="Disabled" />

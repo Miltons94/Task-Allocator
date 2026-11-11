@@ -20,6 +20,7 @@ using StudyFlow.Views.Dialogs;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.UI;
+using StudyFlow.Bus.Enums;
 
 namespace StudyFlow.Views.Pages;
 public sealed partial class MainPage : Page
@@ -192,49 +193,7 @@ public sealed partial class MainPage : Page
 
         RefreshTaskGroups();
     }
-
-    private async void AddSubtask_Click(object sender, RoutedEventArgs e)
-    {
-        if (sender is not Button { DataContext: TaskItem task, Parent: Grid row })
-        {
-            return;
-        }
-
-        var input = row.Children.OfType<TextBox>().FirstOrDefault();
-        if (input is not null)
-        {
-            await AddSubtaskAsync(task, input);
-        }
-    }
-
-    private async void SubtaskInput_KeyDown(object sender, KeyRoutedEventArgs e)
-    {
-        if (e.Key != Windows.System.VirtualKey.Enter
-            || sender is not TextBox input
-            || input.DataContext is not TaskItem task)
-        {
-            return;
-        }
-
-        e.Handled = true;
-        await AddSubtaskAsync(task, input);
-    }
-
-    private async Task AddSubtaskAsync(TaskItem task, TextBox input)
-    {
-        var title = input.Text.Trim();
-        if (string.IsNullOrWhiteSpace(title)
-            || task.Checklist.Any(item => string.Equals(item.Title, title, StringComparison.CurrentCultureIgnoreCase)))
-        {
-            return;
-        }
-
-        task.Checklist.Add(new TaskChecklistItem { Title = title });
-        await _taskStorage.UpdateTaskAsync(task);
-        input.Text = string.Empty;
-        RefreshTaskGroups();
-    }
-
+    
     private async void StartFocus_Click(object sender, RoutedEventArgs e)
     {
         if (sender is Button { DataContext: TaskItem task })
@@ -358,20 +317,6 @@ public sealed partial class MainPage : Page
         RefreshTaskGroups();
     }
 
-    private async void ChecklistItem_Click(object sender, RoutedEventArgs e)
-    {
-        if (sender is CheckBox { DataContext: TaskChecklistItem item })
-        {
-            item.IsCompleted = ((CheckBox)sender).IsChecked == true;
-            var owner = Tasks.FirstOrDefault(task => task.Checklist.Any(checklistItem => checklistItem.Id == item.Id));
-            if (owner is not null)
-            {
-                await _taskStorage.UpdateTaskAsync(owner);
-                RefreshTaskGroups();
-            }
-        }
-    }
-
     private async void AddAcademicEvent_Click(object sender, RoutedEventArgs e)
     {
         await ShowAcademicEventDialogAsync();
@@ -382,6 +327,37 @@ public sealed partial class MainPage : Page
         if (GetAcademicEvent(sender) is AcademicEvent academicEvent)
         {
             await ShowAcademicEventDialogAsync(academicEvent);
+        }
+    }
+
+    private async void CreateEventPrepTasks_Click(object sender, RoutedEventArgs e)
+    {
+        if (GetAcademicEvent(sender) is not AcademicEvent academicEvent)
+        {
+            return;
+        }
+
+        var prepDate = academicEvent.StartDate.Date.AddDays(-1);
+        var localOffset = DateTimeOffset.Now.Offset;
+        var prepTask = new TaskItem(
+            $"Prepare for {academicEvent.Title}",
+            academicEvent.Description,
+            Category.UniversityWork,
+            TaskState.Unset,
+            priority: 3,
+            startDate: DateTimeOffset.Now,
+            dueDate: new DateTimeOffset(prepDate.Year, prepDate.Month, prepDate.Day, 9, 0, 0, localOffset),
+            isCompleted: false);
+
+        try
+        {
+            await _taskStorage.SaveTaskAsync(prepTask);
+            await LoadTasksAsync();
+            RefreshTaskAlarms();
+        }
+        catch (Exception ex)
+        {
+            await ShowAcademicEventErrorAsync("The preparation task could not be created.", ex);
         }
     }
 
@@ -523,109 +499,9 @@ public sealed partial class MainPage : Page
         var tasks = await AllTasks.GetTasksAsync();
         foreach (var task in tasks)
         {
-            task.Checklist ??= new ObservableCollection<TaskChecklistItem>();
             Tasks.Add(task);
         }
         RefreshTaskGroups();
-    }
-
-    private async void CreateEventPrepTasks_Click(object sender, RoutedEventArgs e)
-    {
-        if (GetAcademicEvent(sender) is not AcademicEvent academicEvent)
-        {
-            return;
-        }
-
-        if (academicEvent.StartDate.Date < DateTimeOffset.Now.Date)
-        {
-            var pastEventDialog = new ContentDialog
-            {
-                Title = "Event has passed",
-                Content = "Prep tasks can only be created for upcoming events.",
-                CloseButtonText = "OK",
-                XamlRoot = XamlRoot
-            };
-            await pastEventDialog.ShowAsync();
-            return;
-        }
-
-        var today = DateTimeOffset.Now.Date;
-        var plan = academicEvent.Type switch
-        {
-            StudyFlow.Bus.Enums.AcademicEventType.Exam => new[]
-            {
-                (Title: $"Review notes for {academicEvent.Title}", DaysBefore: 3, Minutes: 45),
-                (Title: $"Practice for {academicEvent.Title}", DaysBefore: 1, Minutes: 30),
-                (Title: $"Gather materials for {academicEvent.Title}", DaysBefore: 0, Minutes: 15)
-            },
-            StudyFlow.Bus.Enums.AcademicEventType.Assignment => new[]
-            {
-                (Title: $"Outline {academicEvent.Title}", DaysBefore: 3, Minutes: 25),
-                (Title: $"Draft {academicEvent.Title}", DaysBefore: 2, Minutes: 45),
-                (Title: $"Review {academicEvent.Title}", DaysBefore: 1, Minutes: 25)
-            },
-            _ => new[]
-            {
-                (Title: $"Prepare for {academicEvent.Title}", DaysBefore: 1, Minutes: 25),
-                (Title: $"Gather materials for {academicEvent.Title}", DaysBefore: 0, Minutes: 15)
-            }
-        };
-
-        var existingTitles = Tasks
-            .Where(task => task.LinkedEventId == academicEvent.Id)
-            .Select(task => task.Name)
-            .ToHashSet(StringComparer.CurrentCultureIgnoreCase);
-        var created = 0;
-        foreach (var step in plan)
-        {
-            if (existingTitles.Contains(step.Title))
-            {
-                continue;
-            }
-
-            var dueDay = academicEvent.StartDate.Date.AddDays(-step.DaysBefore);
-            if (dueDay < today)
-            {
-                dueDay = today;
-            }
-
-            var task = new TaskItem
-            {
-                Name = step.Title,
-                Description = $"Preparation for {academicEvent.Title}.",
-                Category = Category.UniversityWork,
-                Priority = academicEvent.Type is StudyFlow.Bus.Enums.AcademicEventType.Exam
-                    or StudyFlow.Bus.Enums.AcademicEventType.Assignment ? 3 : 2,
-                StartDate = DateTimeOffset.Now,
-                DueDate = new DateTimeOffset(dueDay.Year, dueDay.Month, dueDay.Day, 9, 0, 0, academicEvent.StartDate.Offset),
-                HasExplicitDueTime = true,
-                EstimatedMinutes = step.Minutes,
-                RemindersEnabled = true,
-                ReminderLeadMinutes = 30,
-                LinkedEventId = academicEvent.Id,
-                LinkedEventTitle = academicEvent.Title
-            };
-            await _taskStorage.SaveTaskAsync(task);
-            existingTitles.Add(step.Title);
-            created++;
-        }
-
-        if (created > 0)
-        {
-            await LoadTasksAsync();
-            RefreshTaskAlarms();
-        }
-
-        var resultDialog = new ContentDialog
-        {
-            Title = created > 0 ? "Prep plan created" : "Prep plan already exists",
-            Content = created > 0
-                ? $"Added {created} preparation task{(created == 1 ? "" : "s")} for {academicEvent.Title}."
-                : $"All suggested preparation tasks for {academicEvent.Title} are already in your task list.",
-            CloseButtonText = "OK",
-            XamlRoot = XamlRoot
-        };
-        await resultDialog.ShowAsync();
     }
 
     private void RefreshTaskAlarms()
@@ -677,9 +553,7 @@ public sealed partial class MainPage : Page
             matching = matching.Where(task =>
                 task.Name.Contains(query, StringComparison.CurrentCultureIgnoreCase)
                 || (task.Description?.Contains(query, StringComparison.CurrentCultureIgnoreCase) ?? false)
-                || task.Category.ToString().Contains(query, StringComparison.CurrentCultureIgnoreCase)
-                || (task.LinkedEventTitle?.Contains(query, StringComparison.CurrentCultureIgnoreCase) ?? false)
-                || task.Checklist.Any(item => item.Title.Contains(query, StringComparison.CurrentCultureIgnoreCase)));
+                || task.Category.ToString().Contains(query, StringComparison.CurrentCultureIgnoreCase));
         }
 
         var matchedTasks = matching.ToList();

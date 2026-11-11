@@ -4,8 +4,6 @@ using StudyFlow.Bus.Services;
 using StudyFlow.Enums;
 using StudyFlow.Models;
 using System;
-using System.Collections.ObjectModel;
-using System.Linq;
 
 namespace StudyFlow.Views.Dialogs;
 
@@ -38,15 +36,7 @@ public sealed partial class TaskDialog : ContentDialog
                 EstimatedMinutes = existingTask.EstimatedMinutes,
                 FocusMinutes = existingTask.FocusMinutes,
                 RemindersEnabled = existingTask.RemindersEnabled,
-                ReminderLeadMinutes = existingTask.ReminderLeadMinutes,
-                LinkedEventId = existingTask.LinkedEventId,
-                LinkedEventTitle = existingTask.LinkedEventTitle,
-                Checklist = new ObservableCollection<TaskChecklistItem>(existingTask.Checklist.Select(item => new TaskChecklistItem
-                {
-                    Id = item.Id,
-                    Title = item.Title,
-                    IsCompleted = item.IsCompleted
-                }))
+                ReminderLeadMinutes = existingTask.ReminderLeadMinutes
             };
 
         Title = _isEditing ? "Edit task" : "Create task";
@@ -54,7 +44,6 @@ public sealed partial class TaskDialog : ContentDialog
 
         TitleBox.Text = TaskItem.Name;
         DescriptionBox.Text = TaskItem.Description ?? string.Empty;
-        ChecklistBox.Text = string.Join(Environment.NewLine, TaskItem.Checklist.Select(item => item.Title));
         DueDatePicker.Date = TaskItem.DueDate;
         DueTimePicker.IsEnabled = TaskItem.DueDate.HasValue;
         DueTimePicker.Time = TaskItem.DueDate is DateTimeOffset existingDueDate
@@ -101,19 +90,6 @@ public sealed partial class TaskDialog : ContentDialog
 
             TaskItem.Name = title;
             TaskItem.Description = DescriptionBox.Text.Trim();
-            var oldChecklist = TaskItem.Checklist.ToDictionary(
-                item => item.Title.Trim(),
-                item => item,
-                StringComparer.CurrentCultureIgnoreCase);
-            TaskItem.Checklist = new ObservableCollection<TaskChecklistItem>(
-                ChecklistBox.Text
-                    .Split(new[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries)
-                    .Select(line => line.Trim())
-                    .Where(line => !string.IsNullOrWhiteSpace(line))
-                    .Distinct(StringComparer.CurrentCultureIgnoreCase)
-                    .Select(line => oldChecklist.TryGetValue(line, out var item)
-                        ? item
-                        : new TaskChecklistItem { Title = line }));
             TaskItem.DueDate = DueDatePicker.Date is DateTimeOffset dueDate
                 ? new DateTimeOffset(
                     dueDate.Year,

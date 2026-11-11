@@ -41,32 +41,32 @@
             <NavigationView.MenuItems>
                 <NavigationViewItem Content="Home" Tag="Home">
                     <NavigationViewItem.Icon>
-                        <SymbolIcon Symbol="Home" />
+                        <FontIcon Glyph="&#xE80F;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 <NavigationViewItem Content="Focus" Tag="Focus">
                     <NavigationViewItem.Icon>
-                        <SymbolIcon Symbol="Play" />
+                        <FontIcon Glyph="&#xF272;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 <NavigationViewItem Content="Today" Tag="Today">
                     <NavigationViewItem.Icon>
-                        <SymbolIcon Symbol="CalendarDay" />
+                        <FontIcon Glyph="&#xE8D1;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 <NavigationViewItem Content="Overdue" Tag="Overdue">
                     <NavigationViewItem.Icon>
-                        <SymbolIcon Symbol="Important" />
+                        <FontIcon Glyph="&#xE7BA;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 <NavigationViewItem Content="My Tasks" Tag="Tasks">
                     <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE8FD;" />
+                        <FontIcon Glyph="&#xE81E;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 <NavigationViewItem Content="Academic Calendar" Tag="Calendar">
                     <NavigationViewItem.Icon>
-                        <SymbolIcon Symbol="Calendar" />
+                        <FontIcon Glyph="&#xE787;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
             </NavigationView.MenuItems>

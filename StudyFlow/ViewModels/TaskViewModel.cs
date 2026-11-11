@@ -25,9 +25,6 @@ public sealed class TaskViewModel
     public string FocusSummary => Task.FocusMinutes > 0
         ? $"Focused {Task.FocusMinutes} min"
         : $"Estimate {Task.EstimatedMinutes} min";
-    public int ChecklistCompletedCount => Task.Checklist.Count(item => item.IsCompleted);
-    public int ChecklistCount => Task.Checklist.Count;
-    public string ChecklistSummary => $"Subtasks · {ChecklistCompletedCount}/{ChecklistCount}";
 
     public TaskViewModel(TaskItem task, DateTimeOffset now)
     {

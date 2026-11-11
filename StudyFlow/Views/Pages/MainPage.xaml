@@ -20,25 +20,7 @@
         <StackLayout x:Key="AcademicEventsLayoutTemplate"
                      Orientation="Vertical"
                      Spacing="8"/>
-        <converters:DueDateForegroundConverter x:Key="DueDateForegroundConverter"/>
-        <converters:OptionalDateVisibilityConverter x:Key="OptionalDateVisibilityConverter"/>
-        <converters:OptionalTextVisibilityConverter x:Key="OptionalTextVisibilityConverter"/>
-        <converters:CompletedTaskTextDecorationsConverter x:Key="CompletedTaskTextDecorationsConverter"/>
-        <converters:NonZeroVisibilityConverter x:Key="NonZeroVisibilityConverter"/>
-        <DataTemplate x:Key="ChecklistItemTemplate"
-                      x:DataType="models:TaskChecklistItem">
-            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8" Padding="4,2">
-                <CheckBox IsChecked="{x:Bind IsCompleted, Mode=TwoWay}"
-                          Click="ChecklistItem_Click"
-                          VerticalAlignment="Center"
-                          AutomationProperties.Name="Complete checklist step" />
-                <TextBlock Grid.Column="1"
-                           Text="{x:Bind Title}"
-                           VerticalAlignment="Center"
-                           TextDecorations="{x:Bind IsCompleted, Mode=OneWay, Converter={StaticResource CompletedTaskTextDecorationsConverter}}"
-                           TextWrapping="Wrap" />
-            </Grid>
-        </DataTemplate>
+        
         <DataTemplate x:Key="TaskItemTemplate"
                       x:DataType="vm:TaskViewModel">
             <ItemContainer Background="Transparent"
@@ -141,28 +123,7 @@
                                        Style="{ThemeResource BodyTextBlockStyle}"
                                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                        TextWrapping="Wrap"/>
-                            <Expander Grid.Row="2"
-                                      Grid.Column="1"
-                                      Grid.ColumnSpan="2"
-                                      Header="{x:Bind ChecklistSummary}">
-                                <StackPanel Spacing="6" Padding="0,4,0,0">
-                                    <ItemsView ItemsSource="{x:Bind Task.Checklist, Mode=OneWay}"
-                                               ItemTemplate="{StaticResource ChecklistItemTemplate}"
-                                               MaxHeight="150"
-                                               ScrollViewer.VerticalScrollBarVisibility="Auto" />
-                                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="6">
-                                        <TextBox PlaceholderText="Add a subtask"
-                                                 MaxLength="120"
-                                                 KeyDown="SubtaskInput_KeyDown" />
-                                        <Button Grid.Column="1"
-                                                Content="Add"
-                                                Click="AddSubtask_Click"
-                                                DataContext="{x:Bind Task}"
-                                                Style="{ThemeResource SubtleButtonStyle}"
-                                                AutomationProperties.Name="Add subtask" />
-                                    </Grid>
-                                </StackPanel>
-                            </Expander>
+                            
                             <Grid Grid.Row="3"
                                   Grid.Column="1"
                                   Grid.ColumnSpan="2"
@@ -289,7 +250,7 @@
         <CommandBar
             DefaultLabelPosition="Right" VerticalAlignment="Top" 
             VerticalContentAlignment="Center">
-            <AppBarButton Icon="Add" Label="Create"
+            <AppBarButton Icon="Add" Label="New Task"
                           Click="AddTaskBtn_Click"/>
             <AppBarButton Icon="Calendar" Label="Add event"
                           Click="AddAcademicEvent_Click"/>
@@ -426,10 +387,13 @@
                     ItemTemplate="{StaticResource TaskItemTemplate}"
                     Layout="{StaticResource TasksLayoutTemplate}"/>
                 <Expander Grid.Row="4"
+                          HorizontalAlignment="Stretch"
+                          HorizontalContentAlignment="Stretch"
                           IsExpanded="False"
                           Visibility="{x:Bind CompletedTasks.Count, Mode=OneWay, Converter={StaticResource CollectionToVisibility}, ConverterParameter=Invert}">
                     <Expander.Header>
-                        <Grid ColumnDefinitions="*,Auto">
+                        <Grid ColumnDefinitions="*,Auto"
+                              HorizontalAlignment="Stretch">
                             <TextBlock Text="Completed tasks"
                                        Style="{ThemeResource BodyStrongTextBlockStyle}"
                                        VerticalAlignment="Center"/>
@@ -437,7 +401,8 @@
                                        Text="{x:Bind CompletedTasks.Count, Mode=OneWay}"
                                        Style="{ThemeResource CaptionTextBlockStyle}"
                                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                       VerticalAlignment="Center"/>
+                                       VerticalAlignment="Center"
+                                       HorizontalAlignment="Right"/>
                         </Grid>
                     </Expander.Header>
                     <ItemsView ItemsSource="{x:Bind CompletedTasks, Mode=OneWay}"
@@ -509,10 +474,13 @@
                                   SelectionMode="None"
                                   ScrollViewer.VerticalScrollBarVisibility="Auto"/>
                         <Expander Grid.Row="2"
+                                  HorizontalAlignment="Stretch"
+                                  HorizontalContentAlignment="Stretch"
                                   IsExpanded="False"
                                   Visibility="{x:Bind PastEvents.Count, Mode=OneWay, Converter={StaticResource CollectionToVisibility}, ConverterParameter=Invert}">
                             <Expander.Header>
-                                <Grid ColumnDefinitions="*,Auto">
+                                <Grid ColumnDefinitions="*,Auto"
+                                      HorizontalAlignment="Stretch">
                                     <TextBlock Text="Past events"
                                                Style="{ThemeResource BodyStrongTextBlockStyle}"
                                                VerticalAlignment="Center"/>
@@ -520,7 +488,8 @@
                                                Text="{x:Bind PastEvents.Count, Mode=OneWay}"
                                                Style="{ThemeResource CaptionTextBlockStyle}"
                                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                               VerticalAlignment="Center"/>
+                                               VerticalAlignment="Center"
+                                               HorizontalAlignment="Right"/>
                                 </Grid>
                             </Expander.Header>
                             <ListView ItemsSource="{x:Bind PastEvents, Mode=OneWay}"

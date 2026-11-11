@@ -15,6 +15,11 @@
             <converters:BoolToPageTitleConverter x:Key="BoolToPageTitle"/>
             <converters:BoolToButtonTextConverter x:Key="BoolToButtonText"/>
             <converters:CollectionVisibilityConverter x:Key="CollectionToVisibility"/>
+            <converters:DueDateForegroundConverter x:Key="DueDateForegroundConverter"/>
+            <converters:OptionalDateVisibilityConverter x:Key="OptionalDateVisibilityConverter"/>
+            <converters:OptionalTextVisibilityConverter x:Key="OptionalTextVisibilityConverter"/>
+            <converters:CompletedTaskTextDecorationsConverter x:Key="CompletedTaskTextDecorationsConverter"/>
+            <converters:NonZeroVisibilityConverter x:Key="NonZeroVisibilityConverter"/>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

@@ -1,20 +1,17 @@
 ﻿using Microsoft.UI.Xaml.Data;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace StudyFlow.Converters;
 public class BoolToButtonTextConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, string language)
     {
-        if(value is bool res)
+        if(value is bool isEdit)
         {
-            return res ? "Save changes" : "Save";
+            return  isEdit? "Save changes" : "Save";
         }
-        return "Save"; /* fallback value */
+        return "Save"; 
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, string language)

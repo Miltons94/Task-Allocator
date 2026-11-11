@@ -62,9 +62,6 @@ public class TaskItem : INotifyPropertyChanged
     public int FocusMinutes { get; set; }
     public bool RemindersEnabled { get; set; } = true;
     public int ReminderLeadMinutes { get; set; } = 30;
-    public Guid? LinkedEventId { get; set; }
-    public string? LinkedEventTitle { get; set; }
-    public ObservableCollection<TaskChecklistItem> Checklist { get; set; } = new();
     public DateTimeOffset StartDate { get; set; } = DateTimeOffset.Now;
     public DateTimeOffset? DueDate
     {
